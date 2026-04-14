@@ -1,0 +1,184 @@
+﻿import React, { useState } from 'react';
+import { 
+  Users, 
+  Settings, 
+  LogOut, 
+  Shield, 
+  Pencil, 
+  Trash2, 
+  LayoutGrid,
+  Activity,
+  MessageSquare,
+  ChevronRight
+} from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('hlavna');
+  
+  const [students, setStudents] = useState([
+    { id: 1, name: 'Jakub N.', role: 'Študent', pass: 'password123', last: 'Pred 2h' },
+    { id: 2, name: 'Sofia M.', role: 'Študent', pass: 'sofia5', last: 'Včera' },
+    { id: 3, name: 'Peter S.', role: 'Študent', pass: 'peto', last: 'Pred 10m' },
+  ]);
+
+  const removeStudent = (id) => {
+    setStudents(students.filter(s => s.id !== id));
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-[#0a0f1d] text-slate-300 font-sans selection:bg-indigo-500/30">
+      {/* Navigácia / Header */}
+      <nav className="w-full bg-[#111827] border-b border-white/5 px-6 py-4 flex items-center justify-between shadow-2xl">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/20">
+              <Shield size={20} className="text-white" />
+            </div>
+            <span className="text-white font-black tracking-tighter text-lg uppercase">Server 5.A</span>
+          </div>
+          
+          <div className="flex gap-2 bg-[#0a0f1d] p-1 rounded-xl border border-white/5">
+            <button 
+              onClick={() => setActiveTab('hlavna')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'hlavna' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              <LayoutGrid size={16} /> Hlavná plocha
+            </button>
+            <button 
+              onClick={() => setActiveTab('master')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'master' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              <Settings size={16} /> Master Panel (Správa)
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-white text-sm font-bold leading-none uppercase">Admin Michal</p>
+            <p className="text-indigo-400 text-[10px] font-bold tracking-widest uppercase mt-1">Admin</p>
+          </div>
+          <button className="p-2.5 bg-white/5 hover:bg-red-500/20 hover:text-red-500 rounded-xl transition-all border border-white/5">
+            <LogOut size={20} />
+          </button>
+        </div>
+      </nav>
+
+      {/* Hlavný Obsah */}
+      <main className="p-8 max-w-6xl mx-auto">
+        {activeTab === 'hlavna' ? (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Hero Sekcia */}
+            <div className="relative overflow-hidden bg-[#111827] border border-white/5 rounded-[2rem] p-10 flex items-center justify-between group shadow-2xl">
+              <div className="relative z-10">
+                <h1 className="text-5xl font-black text-white tracking-tighter mb-2">SERVER 5.A</h1>
+                <p className="text-slate-400 italic text-lg mb-6">Miesto pre vyvolených študentov</p>
+                <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 rounded-xl border border-white/10 transition-all font-bold text-sm">
+                  <Pencil size={16} /> Upraviť plochu
+                </button>
+              </div>
+              <div className="hidden md:block">
+                <Users size={180} className="text-white/5 group-hover:text-indigo-500/10 transition-colors duration-700" />
+              </div>
+            </div>
+
+            {/* Grid so štatistikami */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatCard label="Aktívni členovia" value={students.length} icon={<Users className="text-indigo-500" />} />
+              <StatCard label="Dnešné správy" value="128" icon={<MessageSquare className="text-purple-500" />} />
+              <StatCard label="Server Status" value="Online" color="text-green-500" icon={<Activity className="text-green-500" />} />
+            </div>
+          </div>
+        ) : (
+          /* Master Panel - Tabuľka */
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex justify-between items-end px-2">
+              <div>
+                <h2 className="text-3xl font-black text-white tracking-tight">SPRÁVA UŽÍVATEĽOV</h2>
+                <p className="text-slate-500 text-sm font-medium">Zoznam všetkých registrovaných študentov v databáze</p>
+              </div>
+              <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all active:scale-95">
+                Pridať užívateľa
+              </button>
+            </div>
+
+            <div className="bg-[#111827] rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/5 bg-white/[0.02]">
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-left">Meno Študenta</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-center">Rola</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-left">Heslo</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-left">Aktivita</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Akcie</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.03]">
+                    {students.map((s) => (
+                      <tr key={s.id} className="hover:bg-white/[0.02] transition-colors group">
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-black border border-indigo-500/20">
+                              {s.name.charAt(0)}
+                            </div>
+                            <span className="text-white font-bold">{s.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-5 text-center">
+                          <span className="bg-slate-800 text-slate-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider border border-white/5">
+                            {s.role}
+                          </span>
+                        </td>
+                        <td className="px-8 py-5 font-mono text-sm text-slate-500">{s.pass}</td>
+                        <td className="px-8 py-5 text-sm text-slate-400 font-medium">{s.last}</td>
+                        <td className="px-8 py-5">
+                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-all">
+                              <Pencil size={18} />
+                            </button>
+                            <button 
+                              onClick={() => removeStudent(s.id)}
+                              className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-all"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Footer Info */}
+      <div className="fixed bottom-6 right-6 flex items-center gap-4 bg-[#111827]/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white/5 text-[10px] font-black tracking-widest uppercase text-slate-500 shadow-2xl">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          DB CONNECTED
+        </div>
+        <div className="w-px h-3 bg-white/10" />
+        <div>ENCRYPTED: AES-256</div>
+      </div>
+    </div>
+  );
+};
+
+// Pomocný komponent pre karty štatistík
+const StatCard = ({ label, value, color = "text-white", icon }) => (
+  <div className="bg-[#111827] p-8 rounded-[2rem] border border-white/5 shadow-xl hover:border-indigo-500/30 transition-all group">
+    <div className="flex justify-between items-start mb-4">
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{label}</p>
+      <div className="p-2 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+    </div>
+    <p className={`text-4xl font-black tracking-tighter ${color}`}>{value}</p>
+  </div>
+);
+
+export default App;
